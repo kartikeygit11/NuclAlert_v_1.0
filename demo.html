@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Compound Interest Layout</title>
+  <link rel="stylesheet" href="colourCode.css">
+  <style>
+    /* Keep the exact same CSS as in your template */
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <!-- Arrow Column -->
+  <div class="arrow-col">
+    <div class="arrow arrow1">➜</div>
+    <div class="arrow arrow2">➜</div>
+    <div class="arrow arrow3">➜</div>
+    <div class="arrow arrow4">➜</div>
+  </div>
+
+  <!-- Left Column -->
+  <div class="left-col">
+    <div class="step">
+      <span class="numbox">9261</span>
+      <span>=</span>
+      <span class="numbox">8000</span>
+      <div class="bracket">
+        <span class="thirdBracket">[</span> 1 +
+        <span class="fraction">
+          <span class="top varbox R">r</span>
+          <span class="bottom">100</span>
+        </span> <span class="thirdBracket">]</span> <sup>2</sup>
+      </div>
+    </div>
+
+    <div style="position: relative; left:130px; display: flex;flex-direction: column ; row-gap: 10px;">
+      <div class="step">
+        <div class="bracket">  
+          <span class="thirdBracket">[</span> 1 +
+          <span class="fraction">
+            <span class="top varbox R">r</span>
+            <span class="bottom">100</span>
+          </span> <span class="thirdBracket">]</span><sup>2</sup>
+        </div>
+        <span>=</span>
+        <span class="fraction">
+          <span class="top">9261</span>
+          <span class="bottom">8000</span>
+        </span>
+      </div>
+
+      <div class="dashed-container">
+        <div class="bracket"> 
+          <span class="thirdBracket">[</span> 1 +
+          <span class="fraction">
+            <span class="top varbox R">r</span>
+            <span class="bottom">100</span>
+          </span>  
+          <span class="thirdBracket">]</span>
+        </div>
+
+        <span>=</span>
+        <span class="fraction">
+          <span class="top"><span class="numbox num1">107</span></span>
+          <span class="bottom"><span class="numbox num5">100</span></span>
+        </span>
+
+        <div class="dashed-line"></div>
+
+        <div class="step">
+          <span class="blackbox-inline">107² = 11449<br>100² = 10000</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <span class="varbox R">r</span>
+      <span>=</span>
+      <span class="fraction">
+        <span class=" top"><span class="numbox num7">7</span></span>
+        <span class="bottom"><span class="numbox num5">100</span></span>
+      </span>
+      <span>× 100</span>
+      <span class="varbox R" style="margin-left: 80px;">r</span>
+      <span>=</span>
+      <span class="numbox">7%</span>
+    </div>
+  </div>
+
+  <!-- Right Column -->
+  <div class="right-col">
+    <div class="right-top-box">
+      <img src="interesticon.png" alt="icon">
+      <div class="vertical-content">
+        <span>Interest Compounded Annually</span>
+
+        <!-- ARROW + BLACKBOX WRAPPER -->
+        <div class="blackbox-container">
+          <div class="long-arrow"></div>
+          <div class="blackbox" style="color: #000;">
+            <span class="numbox">8000</span>
+            <span class="numbox num3">2</span>
+            <span class="numbox">9261</span>
+          </div>
+        </div>
+
+        <span style="text-align: center;">years</span>
+      </div>
+    </div>
+
+    <div class="blackbox" style="padding-left: 35px;">
+      Amount of the same sum in 3 years at<br />
+      the same rate of compound interest
+    </div>
+
+    <div style="position: relative;left: 126px; display: flex; flex-direction: column; row-gap: 20px;">
+      <div class="calc-line">
+        <span>=</span>
+        <span class="numbox">8000</span>
+        <span class="bracket">  
+          <span class="thirdBracket">[</span>1 +
+          <span class="fraction">
+            <span class="top">7</span>
+            <span class="bottom">100</span>
+          </span>  
+          <span class="thirdBracket">]</span> <sup>3</sup>
+        </span>
+      </div>
+
+      <div class="calc-line">
+        <span>=</span>
+        <span class="numbox">8000</span>
+        <span>×</span>
+        <span class="fraction">
+          <span class="top">107</span>
+          <span class="bottom">100</span>
+        </span>
+        <span>×</span>
+        <span class="fraction">
+          <span class="top">107</span>
+          <span class="bottom">100</span>
+        </span>
+        <span>×</span>
+        <span class="fraction">
+          <span class="top">107</span>
+          <span class="bottom">100</span>
+        </span>
+      </div>
+
+      <div class="calc-line">
+        <span>=</span>
+        <span class="highlight">9933.43 (approx)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

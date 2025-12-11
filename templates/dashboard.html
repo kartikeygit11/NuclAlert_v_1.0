@@ -1,0 +1,334 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Nuclear Radiation Detection{% endblock %}
+
+{% block content %}
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Radiation_warning_symbol.svg/600px-Radiation_warning_symbol.svg.png" alt="Radiation Symbol" width="90">
+            <h2>☢️ Nuclear Safety Dashboard</h2>
+            <p>Real-time nuclear hazard tracking</p>
+        </div>
+        
+        <hr>
+        
+        <div class="sidebar-section">
+            <h3>📊 Data Source</h3>
+            <p>Data is automatically loaded from <strong>data/data2.csv</strong></p>
+            <button type="button" class="btn btn-upload" onclick="reloadData()">🔄 Reload Data</button>
+        </div>
+        
+        <hr>
+        
+        <div class="sidebar-section">
+            <h3>ℹ️ About</h3>
+            <p>This dashboard provides real-time monitoring of nuclear radiation risks in your vicinity. Developed for public safety awareness.</p>
+        </div>
+        
+        <hr>
+        
+        <div class="sidebar-section">
+            <div class="expander">
+                <button class="expander-btn" onclick="toggleExpander(this)">Safety Guidelines</button>
+                <div class="expander-content" style="display: none;">
+                    <ul>
+                        <li>Stay at least <strong>50km</strong> from dangerous plants</li>
+                        <li>Limit exposure time in moderate zones</li>
+                        <li>Follow local emergency procedures</li>
+                        <li>Monitor radiation levels regularly</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>📊 Nuclear Power Plant Analysis</h1>
+            <p>Monitor and receive instant alerts about nearby nuclear radiation risks.</p>
+        </div>
+
+        <!-- Loading indicator -->
+        <div id="loadingPrompt" class="upload-prompt">
+            <h3>⏳ Loading Data...</h3>
+            <p>Processing nuclear plant data from data/data2.csv</p>
+        </div>
+
+        <!-- Dashboard Content (shown when data is loaded) -->
+        <div id="dashboardContent" style="display: none;">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="showTab('alerts')">🚨 Alerts Dashboard</button>
+                <button class="tab-btn" onclick="showTab('map')">🌍 Interactive Map</button>
+                <button class="tab-btn" onclick="showTab('data')">📊 Plant Data</button>
+            </div>
+
+            <!-- Alerts Tab -->
+            <div id="alertsTab" class="tab-content active">
+                <h3>Current Radiation Status</h3>
+                
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <h3>Total Plants</h3>
+                        <h2 id="totalPlants">0</h2>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Safe Plants</h3>
+                        <h2 style="color:#28a745;" id="safeCount">0</h2>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Moderate Plants</h3>
+                        <h2 style="color:#ffc107;" id="moderateCount">0</h2>
+                    </div>
+                    <div class="metric-card">
+                        <h3>Dangerous Plants</h3>
+                        <h2 style="color:#dc3545;" id="dangerousCount">0</h2>
+                    </div>
+                </div>
+
+                <hr>
+
+                <div id="alertSection"></div>
+
+                <hr>
+
+                <h3>Nearby Nuclear Plants</h3>
+                <div id="nearbyPlants"></div>
+            </div>
+
+            <!-- Map Tab -->
+            <div id="mapTab" class="tab-content">
+                <h3>Interactive Radiation Map</h3>
+                <p>
+                    <span style="color:#28a745;">🟢 Safe</span> | 
+                    <span style="color:#ffc107;">🟠 Moderate</span> | 
+                    <span style="color:#dc3545;">🔴 Dangerous</span>
+                </p>
+                <div id="mapContainer"></div>
+            </div>
+
+            <!-- Data Tab -->
+            <div id="dataTab" class="tab-content">
+                <h3>Nuclear Plant Database</h3>
+                <div id="dataTable"></div>
+                <a href="{{ url_for('download_processed') }}" class="btn btn-download">📥 Download Processed Data</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let currentData = null;
+
+function toggleExpander(btn) {
+    const content = btn.nextElementSibling;
+    if (content.style.display === 'none') {
+        content.style.display = 'block';
+    } else {
+        content.style.display = 'none';
+    }
+}
+
+function showTab(tabName) {
+    // Hide all tabs
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Show selected tab
+    document.getElementById(tabName + 'Tab').classList.add('active');
+    event.target.classList.add('active');
+    
+    // Load map if map tab is selected
+    if (tabName === 'map' && currentData && currentData.map_filename) {
+        loadMap(currentData.map_filename);
+    }
+}
+
+function loadMap(filename) {
+    const mapContainer = document.getElementById('mapContainer');
+    const mapUrl = "{{ url_for('static', filename='maps/') }}" + filename;
+    mapContainer.innerHTML = `<iframe src="${mapUrl}" width="100%" height="600" frameborder="0"></iframe>`;
+}
+
+// Load data function
+async function reloadData() {
+    document.getElementById('loadingPrompt').style.display = 'block';
+    document.getElementById('dashboardContent').style.display = 'none';
+    
+    try {
+        const response = await fetch('{{ url_for("load_data") }}');
+        const result = await response.json();
+        
+        if (result.success) {
+            currentData = result;
+            displayDashboard(result);
+        } else {
+            alert('Error: ' + result.error);
+            document.getElementById('loadingPrompt').style.display = 'none';
+        }
+    } catch (error) {
+        alert('Error loading data: ' + error.message);
+        document.getElementById('loadingPrompt').style.display = 'none';
+    }
+}
+
+function displayDashboard(data) {
+    // Hide loading prompt, show dashboard
+    document.getElementById('loadingPrompt').style.display = 'none';
+    document.getElementById('dashboardContent').style.display = 'block';
+    
+    // Update metrics
+    document.getElementById('totalPlants').textContent = data.total_plants;
+    document.getElementById('safeCount').textContent = data.safe_count;
+    document.getElementById('moderateCount').textContent = data.moderate_count;
+    document.getElementById('dangerousCount').textContent = data.dangerous_count;
+    
+    // Display alerts
+    displayAlerts(data);
+    
+    // Load data for other tabs
+    loadDataTab();
+}
+
+function displayAlerts(data) {
+    const alertSection = document.getElementById('alertSection');
+    let alertHtml = '';
+    
+    if (data.on_site_plants && data.on_site_plants.length > 0) {
+        alertHtml = `
+            <div class="alert alert-danger">
+                <h3>🚨 ON-SITE ALERT</h3>
+                <p>You are currently at the following nuclear plant(s): ${data.on_site_plants.join(', ')}</p>
+                <p><strong>Recommended action:</strong> Follow site safety protocols immediately.</p>
+            </div>
+        `;
+    } else if (data.dangerous_zones && data.dangerous_zones.length > 0) {
+        alertHtml = `
+            <div class="alert alert-danger">
+                <h3>🚨 HIGH RADIATION ALERT</h3>
+                <p>You are within <strong>50km</strong> of ${data.dangerous_zones.length} dangerous nuclear plants: ${data.dangerous_zones.join(', ')}</p>
+                <p><strong>Recommended action:</strong> Evacuate immediately or seek shelter.</p>
+            </div>
+        `;
+    } else if (data.moderate_zones && data.moderate_zones.length > 0) {
+        alertHtml = `
+            <div class="alert alert-warning">
+                <h3>⚠️ Moderate Radiation Warning</h3>
+                <p>You are within <strong>75km</strong> of ${data.moderate_zones.length} aging nuclear plants: ${data.moderate_zones.join(', ')}</p>
+                <p><strong>Recommended action:</strong> Limit outdoor exposure time.</p>
+            </div>
+        `;
+    } else if (data.safe_zones && data.safe_zones.length > 0) {
+        alertHtml = `
+            <div class="alert alert-success">
+                <h3>✅ Safe Zone</h3>
+                <p>You are near ${data.safe_zones.length} newer nuclear plants: ${data.safe_zones.join(', ')}</p>
+                <p>No immediate danger detected.</p>
+            </div>
+        `;
+    } else {
+        alertHtml = `
+            <div class="alert alert-info">
+                <h3>🌿 Clear Area</h3>
+                <p>You are not within immediate proximity of any known nuclear plants.</p>
+                <p>Continue monitoring for updates.</p>
+            </div>
+        `;
+    }
+    
+    alertSection.innerHTML = alertHtml;
+}
+
+async function loadDataTab() {
+    try {
+        const response = await fetch('{{ url_for("get_data") }}');
+        const data = await response.json();
+        
+        if (data.plants) {
+            // Display nearby plants
+            if (data.distances && data.distances.length > 0) {
+                const sortedDistances = data.distances.sort((a, b) => a.Distance - b.Distance);
+                const nearbyHtml = sortedDistances.slice(0, 5).map(plant => {
+                    const safetyClass = plant.Safety.toLowerCase();
+                    return `
+                        <div class="plant-card ${safetyClass}">
+                            <h4>${plant.Name}</h4>
+                            <p>Distance: <b>${plant.Distance.toFixed(2)} km</b> | Age: ${plant.Age} years | Status: <b>${plant.Safety}</b></p>
+                        </div>
+                    `;
+                }).join('');
+                document.getElementById('nearbyPlants').innerHTML = nearbyHtml || '<p>No nuclear plants detected within 100km radius.</p>';
+            }
+            
+            // Display data table
+            const tableHtml = `
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Latitude</th>
+                            <th>Longitude</th>
+                            <th>Age</th>
+                            <th>Safety</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${data.plants.map(plant => `
+                            <tr>
+                                <td>${plant.Name}</td>
+                                <td>${plant.Latitude}</td>
+                                <td>${plant.Longitude}</td>
+                                <td>${plant.Age}</td>
+                                <td class="safety-${plant.Safety.toLowerCase()}">${plant.Safety}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+            document.getElementById('dataTable').innerHTML = tableHtml;
+        }
+    } catch (error) {
+        console.error('Error loading data:', error);
+    }
+}
+
+// Load data on page load
+window.addEventListener('DOMContentLoaded', async function() {
+    // Try to get existing data first
+    try {
+        const response = await fetch('{{ url_for("get_data") }}');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.plants && data.plants.length > 0) {
+                currentData = {
+                    total_plants: data.plants.length,
+                    safe_count: data.plants.filter(p => p.Safety === 'Safe').length,
+                    moderate_count: data.plants.filter(p => p.Safety === 'Moderate').length,
+                    dangerous_count: data.plants.filter(p => p.Safety === 'Dangerous').length,
+                    safe_zones: data.safe_zones || [],
+                    moderate_zones: data.moderate_zones || [],
+                    dangerous_zones: data.dangerous_zones || [],
+                    map_filename: data.map_filename || '',
+                    on_site_plants: data.on_site_plants || []
+                };
+                displayDashboard(currentData);
+                return;
+            }
+        }
+    } catch (error) {
+        console.error('Error loading existing data:', error);
+    }
+    
+    // If no existing data, load it
+    await reloadData();
+});
+</script>
+{% endblock %}
+
