@@ -1,6 +1,7 @@
 """Location services for user geolocation."""
 
 import geocoder
+import os
 import time
 from app.config import DEFAULT_LOCATION, LOCATION_RETRY_ATTEMPTS, LOCATION_RETRY_DELAY
 
@@ -34,6 +35,10 @@ def update_user_location_with_fallback():
     Returns:
         tuple: (latitude, longitude)
     """
+    # Force default location when testing/demo to ensure consistent on-site alerts near Prayagraj
+    if os.environ.get("FORCE_DEFAULT_LOCATION", "1") == "1":
+        return DEFAULT_LOCATION["latitude"], DEFAULT_LOCATION["longitude"]
+    
     latitude, longitude = get_user_location()
     
     # If location detection failed, use default

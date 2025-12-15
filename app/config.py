@@ -22,10 +22,10 @@ DISTANCE_THRESHOLDS = {
     "dangerous_zone": 50
 }
 
-# Default Location (NYC)
+# Default Location (Prayagraj / Allahabad, India)
 DEFAULT_LOCATION = {
-    "latitude": 40.7128,
-    "longitude": -74.0060
+    "latitude": 25.4358,
+    "longitude": 81.8463
 }
 
 # Location Detection Settings

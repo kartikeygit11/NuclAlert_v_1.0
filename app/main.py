@@ -93,6 +93,15 @@ def create_app():
             
             df = df[required_cols].copy()
             
+            # Add a reference plant near Prayagraj / Allahabad for demo alerts
+            prayagraj_plant = {
+                'Name': 'Prayagraj Research Reactor',
+                'Latitude': 25.4358,
+                'Longitude': 81.8463,
+                'Age': 22  # Moderate by default thresholds
+            }
+            df = pd.concat([df, pd.DataFrame([prayagraj_plant])], ignore_index=True)
+            
             # Remove rows with missing essential data
             df = df.dropna(subset=['Name', 'Latitude', 'Longitude'])
             

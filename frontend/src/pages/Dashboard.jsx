@@ -1,5 +1,8 @@
 import { useEffect, useState } from 'react';
 import { API_BASE, getData, loadData, mapUrl } from '../lib/api';
+import NavBar from '../components/NavBar';
+import Footer from '../components/Footer';
+import { motion } from 'framer-motion';
 
 const MetricCard = ({ label, value, color }) => (
   <div className="p-4 rounded-xl border border-slate-800 bg-slate-900/80 shadow-lg text-center">
@@ -139,6 +142,8 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('alerts');
+  const [showOnSitePopup, setShowOnSitePopup] = useState(false);
+  const [onSiteInfo, setOnSiteInfo] = useState(null);
 
   const fetchData = async () => {
     setLoading(true);
@@ -150,6 +155,22 @@ const Dashboard = () => {
         result = await getData();
       }
       setData(result);
+
+      if (result.on_site_plants && result.on_site_plants.length > 0) {
+        const safetyTypes = {};
+        result.on_site_plants.forEach((name) => {
+          const plant = result.plants?.find((p) => p.Name === name);
+          if (plant) safetyTypes[name] = plant.Safety;
+        });
+        setOnSiteInfo({
+          plants: result.on_site_plants,
+          safetyTypes,
+        });
+        setShowOnSitePopup(true);
+      } else {
+        setShowOnSitePopup(false);
+        setOnSiteInfo(null);
+      }
     } catch (err) {
       setError(err.message || 'Unable to load data');
     } finally {
@@ -170,8 +191,14 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="max-w-7xl mx-auto px-6 py-10 space-y-6">
-        <header className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <NavBar />
+      <div className="max-w-7xl mx-auto px-6 py-12 space-y-6 pt-24">
+        <motion.header
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-slate-900/80 border border-slate-800 rounded-3xl p-6 shadow-2xl backdrop-blur flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+        >
           <div>
             <p className="text-sm uppercase tracking-[0.2em] text-primary font-semibold">Nuclear Safety Dashboard</p>
             <h1 className="text-3xl font-bold text-white mt-1">Real-time Nuclear Hazard Tracking</h1>
@@ -185,7 +212,7 @@ const Dashboard = () => {
               🔄 Reload Data
             </button>
           </div>
-        </header>
+        </motion.header>
 
         {error && (
           <div className="border border-rose-500/40 bg-rose-500/10 text-rose-100 px-4 py-3 rounded-xl">
@@ -193,21 +220,60 @@ const Dashboard = () => {
           </div>
         )}
 
+        {showOnSitePopup && onSiteInfo && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed top-24 right-6 z-50 max-w-sm bg-slate-900 border border-amber-400 rounded-2xl shadow-2xl p-4"
+          >
+            <div className="flex justify-between items-start gap-3">
+              <div>
+                <p className="text-xs uppercase tracking-[0.18em] text-amber-300 font-semibold">On-site alert</p>
+                <h2 className="text-lg font-bold text-white mt-1">You are in a nuclear area</h2>
+                <p className="text-slate-200 text-sm mt-1">
+                  {onSiteInfo.plants.join(', ')} –{' '}
+                  {Object.values(onSiteInfo.safetyTypes).join(', ') || 'Unknown'} zone.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowOnSitePopup(false)}
+                className="text-slate-400 hover:text-slate-100 text-sm"
+              >
+                ✕
+              </button>
+            </div>
+          </motion.div>
+        )}
+
         {loading ? (
-          <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-10 text-center shadow-xl">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-slate-900/70 border border-slate-800 rounded-2xl p-10 text-center shadow-xl"
+          >
             <p className="text-lg font-semibold">⏳ Loading data...</p>
             <p className="text-slate-400 text-sm mt-2">Processing nuclear plant dataset</p>
-          </div>
+          </motion.div>
         ) : (
           <>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+            >
               <MetricCard label="Total Plants" value={totals.total} color="#e5e7eb" />
               <MetricCard label="Safe Plants" value={totals.safe} color="#22c55e" />
               <MetricCard label="Moderate Plants" value={totals.moderate} color="#f59e0b" />
               <MetricCard label="Dangerous Plants" value={totals.dangerous} color="#ef4444" />
-            </div>
+            </motion.div>
 
-            <div className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4"
+            >
               <div className="flex flex-wrap gap-3 border-b border-slate-800 pb-3">
                 {['alerts', 'map', 'data'].map((tab) => (
                   <button
@@ -225,26 +291,26 @@ const Dashboard = () => {
               </div>
 
               {activeTab === 'alerts' && (
-                <div className="space-y-4">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
                   <h3 className="text-xl font-semibold text-white">Current Radiation Status</h3>
                   <AlertBanner data={data} />
                   <div>
                     <h4 className="text-lg font-semibold mb-3">Nearby Nuclear Plants</h4>
                     <NearbyList distances={data?.distances} />
                   </div>
-                </div>
+                </motion.div>
               )}
 
               {activeTab === 'map' && (
-                <div className="space-y-3">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
                   <h3 className="text-xl font-semibold text-white">Interactive Radiation Map</h3>
                   <p className="text-slate-400 text-sm">🟢 Safe | 🟠 Moderate | 🔴 Dangerous</p>
                   <MapFrame filename={data?.map_filename} />
-                </div>
+                </motion.div>
               )}
 
               {activeTab === 'data' && (
-                <div className="space-y-3">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
                   <div className="flex items-center justify-between">
                     <h3 className="text-xl font-semibold text-white">Nuclear Plant Database</h3>
                     <a
@@ -256,12 +322,13 @@ const Dashboard = () => {
                     </a>
                   </div>
                   <PlantsTable plants={data?.plants} />
-                </div>
+                </motion.div>
               )}
-            </div>
+            </motion.div>
           </>
         )}
       </div>
+      <Footer />
     </div>
   );
 };
