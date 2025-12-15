@@ -1,91 +1,91 @@
 {% extends "base.html" %}
 
-{% block title %}Welcome - Nuclear Radiation Detection{% endblock %}
+{% block title %}NuclrAlert – Welcome{% endblock %}
 
 {% block content %}
-<div class="container">
-    <div class="header">
-        <h1>☢️ Nuclear Radiation Detection & Safety Dashboard</h1>
-        <p>A real-time monitoring system designed to detect, analyze, and alert users when they are near nuclear radiation zones. Stay informed. Stay safe.</p>
-    </div>
+<div class="relative min-h-screen overflow-hidden">
+  <div class="absolute inset-0">
+    <img src="{{ url_for('static', filename='img/pexels-johannes-plenio-4460676.jpg') }}" alt="NuclrAlert" class="w-full h-full object-cover opacity-30">
+    <div class="absolute inset-0 bg-gradient-to-b from-slate-950/80 via-slate-950/85 to-slate-900"></div>
+  </div>
 
-    <div class="intro-image">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Radiation_warning_symbol.svg/600px-Radiation_warning_symbol.svg.png" alt="Radiation Symbol" width="120">
-    </div>
-
-    <div class="intro-section">
-        <h2>🔍 Project Overview</h2>
-        <div class="expander">
-            <button class="expander-btn" onclick="toggleExpander(this)">Learn more about this dashboard</button>
-            <div class="expander-content" style="display: none;">
-                <p>This advanced monitoring system provides:</p>
-                <ul>
-                    <li><strong>Real-time location tracking</strong> with GPS precision</li>
-                    <li><strong>Nuclear plant safety classification</strong> based on operational age and safety records</li>
-                    <li><strong>Instant alerts</strong> with desktop notifications when in dangerous proximity</li>
-                    <li><strong>Interactive heatmap</strong> visualization of radiation risk zones</li>
-                    <li><strong>Custom data integration</strong> for personalized monitoring</li>
-                </ul>
-            </div>
+  <div class="relative z-10 max-w-6xl mx-auto px-6 py-12 space-y-10">
+    <header class="flex flex-col md:flex-row md:items-center md:justify-between gap-6 bg-slate-900/70 border border-slate-800 rounded-2xl p-8 shadow-2xl backdrop-blur">
+      <div class="space-y-3">
+        <p class="text-sm uppercase tracking-[0.2em] text-primary font-semibold">NuclrAlert</p>
+        <h1 class="text-3xl md:text-4xl font-bold text-white">Real-time Nuclear Radiation Detection & Safety</h1>
+        <p class="text-slate-200 max-w-3xl">Monitor risk zones, understand your proximity to nuclear plants, and receive instant alerts when you are on-site or near hazardous locations.</p>
+        <div class="flex flex-wrap gap-3">
+          <span class="px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-200 text-sm border border-emerald-500/30">Live Location</span>
+          <span class="px-3 py-1 rounded-full bg-blue-500/10 text-blue-200 text-sm border border-blue-500/30">Interactive Maps</span>
+          <span class="px-3 py-1 rounded-full bg-amber-500/10 text-amber-200 text-sm border border-amber-500/30">Instant Alerts</span>
         </div>
-    </div>
-
-    <div class="intro-section">
-        <h2>⚙️ How It Works</h2>
-        <div class="expander">
-            <button class="expander-btn" onclick="toggleExpander(this)">See how the system operates</button>
-            <div class="expander-content" style="display: none;">
-                <ol>
-                    <li><strong>Upload</strong> a CSV file containing nuclear plant details (Name, Latitude, Longitude, Age)</li>
-                    <li>The system <strong>pinpoints your location</strong> automatically with IP geolocation</li>
-                    <li>It <strong>calculates precise distances</strong> between you and each plant</li>
-                    <li>Plants are classified as:
-                        <ul>
-                            <li>🟢 <strong>Safe</strong> (Under 15 years old)</li>
-                            <li>🟠 <strong>Moderate</strong> (15-40 years old)</li>
-                            <li>🔴 <strong>Dangerous</strong> (Over 40 years old)</li>
-                        </ul>
-                    </li>
-                    <li>You receive <strong>real-time notifications</strong> when entering risk zones</li>
-                </ol>
-            </div>
+      </div>
+      <div class="shrink-0">
+        <div class="flex items-center justify-center w-28 h-28 rounded-2xl bg-slate-800 border border-slate-700 shadow-lg">
+          <span class="text-5xl">☢️</span>
         </div>
-    </div>
+      </div>
+    </header>
 
-    <div class="intro-section">
-        <h2>📌 Technology Stack</h2>
-        <div class="expander">
-            <button class="expander-btn" onclick="toggleExpander(this)">View technical details</button>
-            <div class="expander-content" style="display: none;">
-                <ul>
-                    <li><strong>Python 3.9+</strong> (Core application logic)</li>
-                    <li><strong>Flask</strong> (Web framework)</li>
-                    <li><strong>Geopy</strong> (Accurate distance calculations)</li>
-                    <li><strong>Folium</strong> (Interactive Leaflet maps)</li>
-                    <li><strong>Plyer</strong> (Cross-platform desktop notifications)</li>
-                    <li><strong>Pandas</strong> (Data processing and analysis)</li>
-                </ul>
-            </div>
-        </div>
-    </div>
+    <div class="grid md:grid-cols-3 gap-6">
+      <div class="md:col-span-2 space-y-6">
+        <section class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-lg bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-300 text-xl">🔍</div>
+            <h2 class="text-xl font-semibold text-white">Project Overview</h2>
+          </div>
+          <p class="text-slate-200 mb-4">NuclrAlert empowers you with situational awareness around nuclear sites. Stay ahead with precise proximity alerts and clear safety guidance.</p>
+          <ul class="space-y-2 text-slate-200">
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">•</span> Real-time location tracking with IP geolocation fallback.</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">•</span> Automatic classification of plants by safety and age.</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">•</span> On-site detection and instant alerting.</li>
+            <li class="flex items-start gap-2"><span class="text-emerald-400 mt-0.5">•</span> Interactive Folium maps with safety overlays.</li>
+          </ul>
+        </section>
 
-    <div class="intro-actions">
-        <form method="POST" action="{{ url_for('skip_intro') }}">
-            <button type="submit" class="btn btn-primary">🚀 Proceed to Dashboard</button>
-        </form>
+        <section class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-blue-500/15 border border-blue-500/30 flex items-center justify-center text-blue-300 text-xl">⚙️</div>
+            <h2 class="text-xl font-semibold text-white">How It Works</h2>
+          </div>
+          <ol class="space-y-2 text-slate-200 list-decimal list-inside">
+            <li>We load the curated nuclear plant dataset automatically.</li>
+            <li>We pinpoint your location using geolocation.</li>
+            <li>We calculate your exact distance to each plant.</li>
+            <li>We classify risk: Safe, Moderate, or Dangerous.</li>
+            <li>We trigger alerts when you are on-site or within risk radii.</li>
+          </ol>
+        </section>
+      </div>
+
+      <aside class="space-y-6">
+        <section class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur space-y-4">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-lg bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-300 text-xl">🧰</div>
+            <h2 class="text-lg font-semibold text-white">Tech Stack</h2>
+          </div>
+          <div class="grid grid-cols-2 gap-3 text-slate-200 text-sm">
+            <span class="px-3 py-2 rounded-xl bg-slate-800/70 border border-slate-700">Flask</span>
+            <span class="px-3 py-2 rounded-xl bg-slate-800/70 border border-slate-700">Pandas</span>
+            <span class="px-3 py-2 rounded-xl bg-slate-800/70 border border-slate-700">Geopy</span>
+            <span class="px-3 py-2 rounded-xl bg-slate-800/70 border border-slate-700">Folium</span>
+            <span class="px-3 py-2 rounded-xl bg-slate-800/70 border border-slate-700">Plyer</span>
+            <span class="px-3 py-2 rounded-xl bg-slate-800/70 border border-slate-700">Tailwind</span>
+          </div>
+        </section>
+
+        <section class="bg-slate-900/70 border border-slate-800 rounded-2xl p-6 shadow-xl backdrop-blur space-y-4">
+          <h3 class="text-lg font-semibold text-white">Ready to monitor?</h3>
+          <p class="text-slate-200 text-sm">Jump straight into the NuclrAlert dashboard to see live proximity and safety intelligence.</p>
+          <form method="POST" action="{{ url_for('skip_intro') }}" class="space-y-3">
+            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-primary text-slate-950 font-semibold shadow-lg shadow-emerald-500/30 hover:scale-[1.01] transition">
+              🚀 Proceed to Dashboard
+            </button>
+          </form>
+        </section>
+      </aside>
     </div>
+  </div>
 </div>
-
-<script>
-function toggleExpander(btn) {
-    const content = btn.nextElementSibling;
-    if (content.style.display === 'none') {
-        content.style.display = 'block';
-    } else {
-        content.style.display = 'none';
-    }
-}
-</script>
 {% endblock %}
-
-
